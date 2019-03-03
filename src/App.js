@@ -14,25 +14,7 @@ class App extends Component {
             {
               id: '1',
               content: 'child 1',
-              child: [
-                {
-                  id: '1',
-                  content: 'child 1',
-                  child: [
-                    {
-                      id: '1',
-                      content: 'child 1',
-                      child: [
-                        {
-                          id: '1',
-                          content: 'child 1',
-                          child: []
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
+              child: []
             },
             {
               id: '2',
@@ -59,7 +41,13 @@ class App extends Component {
         {
           id: '4',
           content: 'item 4',
-          child: []
+          child: [
+            {
+              id: '3',
+              content: 'child 3',
+              child: []
+            }
+          ]
         }
       ]
     }
@@ -99,49 +87,65 @@ class App extends Component {
     if(items[this.draggedOverItem].child.indexOf(this.draggedItem) == -1)
       items[this.draggedOverItem].child.push(this.draggedItem)
 
-    let coba = items.filter(item => item !== this.draggedItem)
+    let itemFilter = items.filter(item => item !== this.draggedItem)
 
-    this.setState({ items: coba }, () => {
+    this.setState({ items: itemFilter }, () => {
       // console.log(this.state.items)
     });
     this.draggedIdx = null;
   };
+  
 
   renderChild = (itemChild, indexChild) => {
-    return (
-      <li key={indexChild}>
-        <div>
-          =
-        </div>
-        <span className="content" style={{ marginLeft: '10px' }}>{itemChild.content}</span>
-      </li>
-    )
+    const treeMap = this.flatten(itemChild.child, 1)
+
+    return treeMap.map((item, index) => {
+      let styleObj = {marginLeft: ((item.depth - 1) * 45)};
+      return (
+          <li key={index} style={ styleObj }>
+            <div>
+              =
+            </div>
+            <span className="content" style={{ marginLeft: '10px' }}>{item.content}</span>
+          </li>
+      )
+    })
+  }
+
+  flatten(array, depth) {
+    return array.reduce((p, c, i, a) => {
+      if (c.child) {
+          const item = {id: c.id, content: c.content, child: c.child, depth: depth};
+          const flatChildren = this.flatten(c.child, depth + 1);
+          return p.concat([item]).concat(flatChildren);
+      } else {
+          const item = {id: c.id, content: c.content, child: c.child, depth: depth};
+          return p.concat([item]);
+      }
+    }, [])
   }
 
   render() {
     return (
       <div className="App">
-        <main>
-          <h3>List of items</h3>
+        <main style={{ backgroundColor: 'white', color: 'black', padding: '10px', width: '100%' }}>
+          <h3>Contoh Tree Data Drag And Drop</h3>
           <ul>
             {this.state.items.map((item, index) => (
               <div key={index}>
                 <li className="drag" key={index} onDragOver={() => this.onDragOver(index)} 
-                    draggable
                     onDragStart={e => this.onDragStart(e, index)}
-                    onDragEnd={() => this.onDragEnd(index)}>
-                  <div
-                    // className="drag"
-                  >
+                    onDragEnd={() => this.onDragEnd(index)}
+                    style={{ margin: '0px 0px 10px 0px' }}
+                    draggable>
+                  <div>
                     =
                   </div>
                   <span className="content" style={{ marginLeft: '10px' }}>{item.content}</span>
                 </li>
 
-                <ul style={{ marginLeft: '30px' }}>
-                  { item.child.map((itemChild, indexChild) => (
-                    this.renderChild(itemChild, indexChild)
-                  )) }
+                <ul style={{ marginLeft: '45px' }}>
+                    {this.renderChild(item, index)}
                 </ul>
               </div>
             ))}

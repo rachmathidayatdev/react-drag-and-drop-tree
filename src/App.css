@@ -22,12 +22,14 @@
 }
 
 .App ul li {
-  background-color: #383838;
+  /* background-color: #383838; */
   padding: 10px 20px;
   position: relative;
   display: flex;
   align-items: flex-start;
   line-height: 1;
+  border: 1px solid black;
+  margin-bottom: 10px;
 }
 
 .App li.drag {
