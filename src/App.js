@@ -14,7 +14,23 @@ class App extends Component {
             {
               id: '1',
               content: 'child 1',
-              child: []
+              child: [
+                {
+                  id: '1',
+                  content: 'child 1',
+                  child: []
+                },
+                {
+                  id: '2',
+                  content: 'child 2',
+                  child: []
+                },
+                {
+                  id: '3',
+                  content: 'child 3',
+                  child: []
+                }
+              ]
             },
             {
               id: '2',
@@ -83,6 +99,10 @@ class App extends Component {
   }
 
   onDragEnd = (index) => {
+    if(this.draggedOverItem === index){
+      return
+    }
+    
     let items = this.state.items
     if(items[this.draggedOverItem].child.indexOf(this.draggedItem) == -1)
       items[this.draggedOverItem].child.push(this.draggedItem)
@@ -136,7 +156,7 @@ class App extends Component {
                 <li className="drag" key={index} onDragOver={() => this.onDragOver(index)} 
                     onDragStart={e => this.onDragStart(e, index)}
                     onDragEnd={() => this.onDragEnd(index)}
-                    style={{ margin: '0px 0px 10px 0px' }}
+                    style={{ margin: '0px 0px 20px 0px' }}
                     draggable>
                   <div>
                     =
